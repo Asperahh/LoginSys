@@ -7,9 +7,6 @@ const int N = 21;
 int AccountNo = 0;
 
 
-
-
-
 struct Account{
     char Name[N];
     char password[N];
@@ -280,16 +277,52 @@ void Login(){
 
 
 void menu(){
+    int choice = -1;
+    while(choice!=4){
+        cin>>choice;
+        while(choice<=0||choice>4){
+        cout<<"Invalid Input"<<endl;
+        cin>>choice;
+        }
+        cin.ignore();
+        if(Session!=nullptr){
+            switch(choice){
+                case 1:
+                case 2:
+                    cout<<"Delete"<<endl;//temp shouldnt place here
+                    Removal(2);
+                    break;
+                case 3:
+                    cout<<"Signing out!"<<endl;
+                    Session = nullptr;
+                    break;
+                case 4:
+                    cout<<"Good Bye!"<<endl;
+                    Removal(1);
+                    break;
+            }
+        }else if(Session == nullptr){
+            switch(choice){
+                case 1:
+                    Acc(1);
+                case 2:
+                    Login();
+                case 3:
+                    break;
+                case 4:
+                    cout<<"Good Bye!"<<endl;
+                    Removal(1);
+                    break;
+            }
+        }
 
+    }
 
 
 }
 
 
 int main(){
-    print(1);
-    Acc(1);
-    Login();
-    Removal(1);
-    Login();
+    menu();
+    return  0;
 }
