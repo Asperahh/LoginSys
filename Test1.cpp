@@ -91,7 +91,6 @@ bool CStringCompare(const char C1[N],const char C2[N]){
 
 
 
-
 Account* AccountSearch(const char Name[N],AccountNode* head){
     if(head==nullptr)
         return nullptr;
@@ -117,6 +116,16 @@ Account* AccountSearch(const int Id,AccountNode* head){
     return nullptr;
 }
 
+AccountNode* SearchNode(AccountNode* head,char Name[N]){
+    while(head!=nullptr){
+        if(CStringCompare(head->data->Name,Name)){
+            return head;
+        }
+        head = head->next;
+    }
+    return nullptr;
+}
+
 bool Validation(char pass[N]){
     return true;
 }
@@ -124,14 +133,29 @@ bool Validation(char pass[N]){
 bool Removal(int i){
     switch(i){
         case 1:
-
-
+                if(Session==nullptr){
+                    return false;
+                }
+                AccountNode* temp; 
+                temp = SearchNode(head,Session->Name);
+                if(temp == head){
+                    head = temp->next;
+                }
+                if(temp->next){
+                    temp->next->prev = temp->prev;
+                }
+                if(temp->prev){
+                    temp->prev->next = temp->next;
+                }
+                delete temp->data;
+                delete temp;
+            return true;
             break;
-        case 2: //Delete all List
+        case 2:     //Delete all List
             RHelp(head);
             head = nullptr;
             Session = nullptr;
-
+            return true;
             break;
 
         default:
@@ -147,6 +171,7 @@ void RHelp(AccountNode* temp){
     delete temp->data;
     delete temp;
 }
+
 
 
 void Storage(int p){
@@ -265,5 +290,6 @@ int main(){
     print(1);
     Acc(1);
     Login();
-    Removal(2);
+    Removal(1);
+    Login();
 }
