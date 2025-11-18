@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -37,6 +38,7 @@ struct AccountNode{
 void RHelp(AccountNode* temp);
 
 AccountNode* head = nullptr;
+AccountNode* Loadprev = nullptr;
 Account* Session = nullptr;
 
 void print(int k){
@@ -65,6 +67,11 @@ void print(int k){
          \/____/                  \/____/                                                       
                                                                                                 )"<<endl;
     break;
+        case 2:
+            cout<<"1.Account Creation"<<endl;
+
+            break;
+
 
 
 
@@ -169,16 +176,66 @@ void RHelp(AccountNode* temp){
     delete temp;
 }
 
+static bool checkFiles(const char* filename){
+    ifstream file(filename);
+    return file.good();
+}
+
+void LoadNode(char* Name,char* password,int Id){
+    Account* newAccount = new Account(Name, password, Id);
+    AccountNode* KNode = new AccountNode(newAccount);
+    if(head == nullptr){
+       head = KNode;
+       Loadprev = head;
+    }else{
+        Loadprev->next = KNode;
+        KNode->prev = Loadprev;
+        Loadprev = KNode;
+    }
+    ++AccountNo;
+}
 
 
-void Storage(int p){
+bool Storage(int p,AccountNode* head){
     switch(p){
         case 1:
+            //File Creation&&Writing
+            {
+            if(head==nullptr)
+                return false;
+            ofstream file("userdata.txt");
+            if(file.is_open()){
+                while(head!=nullptr){
+                    file<<head->data->Name<<" ";
+                    file<<head->data->password<<" ";
+                    file<<head->data->Id<<" ";
+                    head = head->next;
 
+                }
+            file.close();
+            }
             break;
+            }
+        case 2:
+            {
+            ifstream file1("userdata.txt");  
+            if(!file1.is_open()) {
+                cout << "No saved data found." << endl;
+                return false;
+            }
+            char name[N],password[N];
+            int id;
+            while (file1 >> name >> password >> id) {
+                LoadNode(name, password, id);
+            }
+            file1.close();
+            return true;
+            }
 
 
     }
+    return false;
+    
 }
 
 void Acc(int i){
@@ -279,9 +336,12 @@ void Login(){
 void menu(){
     int choice = -1;
     while(choice!=4){
+        print(2);
         cin>>choice;
         while(choice<=0||choice>4){
         cout<<"Invalid Input"<<endl;
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(),'\n');
         cin>>choice;
         }
         cin.ignore();
@@ -305,9 +365,12 @@ void menu(){
             switch(choice){
                 case 1:
                     Acc(1);
+                    break;
                 case 2:
                     Login();
+                    break;
                 case 3:
+                    Storage(1,head);
                     break;
                 case 4:
                     cout<<"Good Bye!"<<endl;
@@ -323,6 +386,7 @@ void menu(){
 
 
 int main(){
+    Storage(2,head);
     menu();
     return  0;
 }
